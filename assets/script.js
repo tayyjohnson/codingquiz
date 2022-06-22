@@ -18,12 +18,12 @@ var scoresArr = [];
 
 // landing
 var beginQuiz = function () {
-    questionEl.textContent = "Coding Quiz Challenge";
+    questionEl.textContent = "Let's test your coding knowledge...";
     dialogueEl.innerHTML =
-    "Try and beat the high score! Answer questions as accurately and quickly as possible. Time will be deducted for incorrect responses";
+    "Each time a question is answered incorrectly, time is deducted. Good luck! :)";
     var startEl = document.createElement("button");
     startEl.className = "btn";
-    startEl.textContent = "Begin!";
+    startEl.textContent = "Ready... GO!";
     choicesEl.appendChild(startEl);
   };
 
@@ -44,13 +44,13 @@ var endQuiz = function () {
   initializeElements();
   questionEl.textContent = "All Done!";
   dialogueEl.innerHTML =
-    "Your final score is " + savedTime + "! <br><br> Enter your name! <br><br>";
+    "Your score is... " + savedTime + "! <br><br> Tell us who you are! <br><br>";
   
   inputEl.setAttribute("type", "text");
   dialogueEl.appendChild(inputEl);
   var logEl = document.createElement("button");
   logEl.className = "btn";
-  logEl.textContent = "Log Score";
+  logEl.textContent = "Score Recorded";
   choicesEl.appendChild(logEl);
 };
 
@@ -60,7 +60,7 @@ var showScores = function () {
   questionEl.textContent = "High Scores";
   var startEl = document.createElement("button");
   startEl.className = "btn";
-  startEl.textContent = "Begin!";
+  startEl.textContent = "Ready... GO!";
   choicesEl.appendChild(startEl);
   if (!scoresArr[0]) {
     return;
@@ -72,3 +72,65 @@ var showScores = function () {
     dialogueEl.appendChild(ScoresEl);
   }
 };
+
+//load scores
+var loadScores = function () {
+    scoresObj = localStorage.getItem("scoresObj");
+    if (!scoresObj) {
+      console.log("there is no data");
+      return;
+    }
+    scoresArr = JSON.parse(scoresObj);
+  };
+  
+  // timer
+  var countdown = function () {
+    var timeInterval = setInterval(function () {
+      if (time >= 1) {
+        timerEl.textContent = "Time: " + time;
+        time--;
+      } else {
+        timerEl.textContent = "Time: " + time;
+        clearInterval(timeInterval);
+      }
+    }, 1000);
+  };
+  
+  var buttonHandler = function (event) {
+    var targetEl = event.target;
+    if (targetEl.textContent === "Log Score") {
+      var playerScore = { Player: inputEl.value, Score: savedTime };
+      scoresArr.push(playerScore);
+      localStorage.setItem("scoresObj", JSON.stringify(scoresArr));
+      showScores();
+    } else if (targetEl.textContent === "Ready... GO!") {
+      countdown();
+      questionIncrementer = 0;
+      displayQuestions();
+    } else if (targetEl.textContent !== quiz[questionIncrementer - 1].answer) {
+      time = time - 5;
+      if (questionIncrementer < quiz.length) {
+        answerEl.textContent = "Nice try, but no.";
+        displayQuestions();
+      } else {
+        savedTime = time;
+        time = 0;
+        endQuiz();
+      }
+    } else {
+      if (questionIncrementer < quiz.length) {
+        answerEl.textContent = "YAAAAAAS!";
+        displayQuestions();
+      } else {
+        savedTime = time;
+        time = 0;
+        endQuiz();
+      }
+    }
+  };
+  
+  choicesEl.addEventListener("click", buttonHandler);
+  highScoreEl.addEventListener("click", showScores);
+  
+  loadScores();
+  beginQuiz();
