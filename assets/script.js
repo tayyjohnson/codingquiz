@@ -42,7 +42,7 @@ var displayQuestions = function () {
 
 var endQuiz = function () {
   initializeElements();
-  questionEl.textContent = "All Done!";
+  questionEl.textContent = "That's a wrap!";
   dialogueEl.innerHTML =
     "Your score is... " + savedTime + "! <br><br> Tell us who you are! <br><br>";
   
@@ -65,7 +65,6 @@ var showScores = function () {
   if (!scoresArr[0]) {
     return;
   }
-
   for (i = 0; i < scoresArr.length; i++) {
     var ScoresEl = document.createElement("li");
     ScoresEl.textContent = scoresArr[i].Player + " - " + scoresArr[i].Score;
@@ -96,6 +95,12 @@ var loadScores = function () {
     }, 1000);
   };
   
+  //element initalizer
+  var initializeElements= function() {
+    dialogueEl.innerHTML="";
+    choicesEl.innerHTML="";
+    questionEl.innerHTML="";
+  }
   var buttonHandler = function (event) {
     var targetEl = event.target;
     if (targetEl.textContent === "Log Score") {
