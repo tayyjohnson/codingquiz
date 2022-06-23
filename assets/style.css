@@ -1,3 +1,6 @@
+/* learned what vw = viewport width - it is essentially the same thing as percentage - shorthand when using margin especially */
+
+/* pseudo class = root */
 :root {
     --primary-color: #fff;
     --secondary-color: #000;
@@ -72,3 +75,5 @@ ol {
     border-top: var(--tertiary-color) dotted 1px;
     padding-top: 1vw;
 }
+
+/* reminder - the # is specifying the element's ID and the . specifies the class */

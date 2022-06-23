@@ -16,7 +16,7 @@ var inputEl = document.createElement("input");
 var playerScore = {};
 var scoresArr = [];
 
-// landing
+// landing page - holds the start button & beginning phrases - after the button is hit to start the quiz, the dialogue & question are hidden
 var beginQuiz = function () {
     questionEl.textContent = "Let's test your coding knowledge...";
     dialogueEl.innerHTML =
@@ -27,10 +27,10 @@ var beginQuiz = function () {
     choicesEl.appendChild(startEl);
   };
 
-// display questions
+// display questions -- this i cannot get to work. i can understand what this portion of the code is SUPPOSED to do but my brain hurts trying to figure out why it wont work
 var displayQuestions = function () {
   initializeElements();
-  questionEl.textContent = quiz[questionIncrementer].question;
+  questionEl.message = quiz[questionIncrementer].question;
   for (i = 0; i < quiz[questionIncrementer].choices.length; i++) {
     var listChoiceEl = document.createElement("li");
     listChoiceEl.textContent = quiz[questionIncrementer].choices[i];
@@ -39,7 +39,7 @@ var displayQuestions = function () {
   }
   questionIncrementer++;
 };
-
+// after all this questions are answered - this function tells the user their score - it also stops the timer
 var endQuiz = function () {
   initializeElements();
   questionEl.textContent = "That's a wrap!";
@@ -54,7 +54,7 @@ var endQuiz = function () {
   choicesEl.appendChild(logEl);
 };
 
-//view scores
+//when this button is clicked, the user can view the scores locally on their device - it will not show scores from other users
 var showScores = function () {
   initializeElements();
   questionEl.textContent = "High Scores";
@@ -62,9 +62,11 @@ var showScores = function () {
   startEl.className = "btn";
   startEl.textContent = "Ready... GO!";
   choicesEl.appendChild(startEl);
+  // IF the "High Scores" button is clicked, it will show you the high scores (locally stored)
   if (!scoresArr[0]) {
     return;
   }
+  // Anything higher than a 0 is recorded in the High Scores
   for (i = 0; i < scoresArr.length; i++) {
     var ScoresEl = document.createElement("li");
     ScoresEl.textContent = scoresArr[i].Player + " - " + scoresArr[i].Score;
@@ -72,7 +74,8 @@ var showScores = function () {
   }
 };
 
-//load scores
+//truthfully not sure what this does 100%
+// from what im gathering it means that if there are no scores to be loaded that the console log will return "there is no data"
 var loadScores = function () {
     scoresObj = localStorage.getItem("scoresObj");
     if (!scoresObj) {
@@ -82,7 +85,7 @@ var loadScores = function () {
     scoresArr = JSON.parse(scoresObj);
   };
   
-  // timer
+  // The timer of course
   var countdown = function () {
     var timeInterval = setInterval(function () {
       if (time >= 1) {
@@ -95,12 +98,15 @@ var loadScores = function () {
     }, 1000);
   };
   
-  //element initalizer
+  //element initalizer - this assigns initial value to each variable being called below - essentially it helps better organize your code
   var initializeElements= function() {
     dialogueEl.innerHTML="";
     choicesEl.innerHTML="";
     questionEl.innerHTML="";
   }
+  // the button handler has a big job - when the user clicks it, it goes down the list of what to do
+  // after the button is clicked (the actual "event"), this function will start logging the user's score, start the timer & display the questions & answers
+  // it also will tell the user wether or not the question was answered correctly
   var buttonHandler = function (event) {
     var targetEl = event.target;
     if (targetEl.textContent === "Log Score") {
@@ -108,20 +114,24 @@ var loadScores = function () {
       scoresArr.push(playerScore);
       localStorage.setItem("scoresObj", JSON.stringify(scoresArr));
       showScores();
+  // user presses the "start" button & tells the timer to start counting down & to display the questions on the quiz
     } else if (targetEl.textContent === "Ready... GO!") {
       countdown();
       questionIncrementer = 0;
       displayQuestions();
+  // deducts 5 secs from timer - tells user they got the question wrong
     } else if (targetEl.textContent !== quiz[questionIncrementer - 1].answer) {
       time = time - 5;
       if (questionIncrementer < quiz.length) {
         answerEl.textContent = "Nice try, but no.";
         displayQuestions();
-      } else {
+      } 
+      else {
         savedTime = time;
         time = 0;
         endQuiz();
       }
+  //does not deduct time since question is right -- tells user they chose the correct answer
     } else {
       if (questionIncrementer < quiz.length) {
         answerEl.textContent = "YAAAAAAS!";
@@ -133,7 +143,7 @@ var loadScores = function () {
       }
     }
   };
-  
+ // event listeners - "listens" for the user clicking on button
   choicesEl.addEventListener("click", buttonHandler);
   highScoreEl.addEventListener("click", showScores);
   
